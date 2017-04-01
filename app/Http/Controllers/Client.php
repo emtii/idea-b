@@ -34,6 +34,7 @@ class Client extends Controller
         ];
 
         $ch = curl_init();
+
         curl_setopt($ch, CURLOPT_URL, $this->harvest_api_base_url . $this->endpoint . $this->request);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_TIMEOUT, 60);

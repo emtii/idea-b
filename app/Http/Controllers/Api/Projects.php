@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Client;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Log;
 
 class Projects extends Controller
 {
@@ -27,7 +28,9 @@ class Projects extends Controller
             ->modify('monday this week')
             ->format('Y-m-d');
 
-        $request = self::HARVEST_API_ENDPOINT . '?client=' . $cid . '&updated_since=' . $updated_since;
+        $request = '?client=' . $cid . '&updated_since=' . $updated_since;
+
+        Log::info('Request: ' . $request);
 
         $client = new Client(self::HARVEST_API_ENDPOINT, $request);
 
@@ -42,7 +45,9 @@ class Projects extends Controller
         $billable = '&billable=' . $this->getOnlyBillableProjects();
         $active = '&is_closed=' . $this->getOnlyActiveProjects();
 
-        $request = self::HARVEST_API_ENDPOINT . $pid . 'entries?' . $start . $today . $billable . $active;
+        $request = $pid . 'entries?' . $start . $today . $billable . $active;
+
+        Log::info('Request: ' . $request);
 
         $client = new Client(self::HARVEST_API_ENDPOINT, $request);
 
@@ -69,7 +74,9 @@ class Projects extends Controller
 
     public function getProjectsByCustomerId($cid)
     {
-        $request = self::HARVEST_API_ENDPOINT . '?client=' . $cid;
+        $request = '?client=' . $cid;
+
+        Log::info('Request: ' . $request);
 
         $client = new Client(self::HARVEST_API_ENDPOINT, $request);
 
