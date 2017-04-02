@@ -15,7 +15,7 @@ class ProjectsRepository implements Repository
      *
      * @return string
      */
-    public function getAll()
+    public function getAll() : string
     {
         return '/projects';
     }
@@ -26,7 +26,7 @@ class ProjectsRepository implements Repository
      * @param $id
      * @return string
      */
-    public function getSingle($id)
+    public function getSingle($id) : string
     {
         return '/projects/' . $id;
     }
@@ -37,7 +37,7 @@ class ProjectsRepository implements Repository
      * @param $cid
      * @return string
      */
-    public function getProjectsByClientId($cid)
+    public function getProjectsByClientId($cid) : string
     {
         return '/projects?client=' . $cid;
     }
@@ -48,7 +48,7 @@ class ProjectsRepository implements Repository
      * @param $timestamp
      * @return string
      */
-    public function getProjectsUpdatedSince($timestamp)
+    public function getProjectsUpdatedSince($timestamp) : string
     {
         $date = date('Y-m-d', $timestamp);
         $time = date('H:i', $timestamp);
@@ -62,7 +62,7 @@ class ProjectsRepository implements Repository
      * @param $timestamp
      * @return string
      */
-    public function getProjectsByClientIdAndUpdatedSince($cid, $timestamp)
+    public function getProjectsByClientIdAndUpdatedSince($cid, $timestamp) : string
     {
         $date = date('Y-m-d', $timestamp);
         $time = date('H:i', $timestamp);

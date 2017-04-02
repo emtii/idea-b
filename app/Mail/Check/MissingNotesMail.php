@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Mail;
+namespace App\Mail\Check;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class MissingNotes extends Mailable
+class MissingNotesMail extends Mailable
 {
     use Queueable, SerializesModels;
 

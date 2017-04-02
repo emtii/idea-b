@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Repository\Timesheets;
 
@@ -11,10 +12,13 @@ use App\Repository\Repository;
 class TimesheetsRepository implements Repository
 {
     /**
-     * @inheritdoc
+     * GET https://YOURACCOUNT.harvestapp.com/daily
+     *
+     * @return string
      */
-    public function getAll()
+    public function getAll() : string
     {
+        return '/daily';
     }
 
     /**
@@ -23,9 +27,9 @@ class TimesheetsRepository implements Repository
      * @param $id
      * @return string
      */
-    public function getSingle($id)
+    public function getSingle($id) : string
     {
-        return '/daily/' . $id;
+        return '/daily/show/' . $id;
     }
 
     /**
@@ -35,7 +39,7 @@ class TimesheetsRepository implements Repository
      * @param boolean $slim
      * @return string
      */
-    public function getEntriesForCurrentDay($slim = false)
+    public function getEntriesForCurrentDay($slim = false) : string
     {
         if ($slim) {
             return '/daily';
@@ -49,7 +53,7 @@ class TimesheetsRepository implements Repository
      *
      * @return string
      */
-    public function getEntriesForASpecificDate()
+    public function getEntriesForASpecificDate() : string
     {
         $today = date('z') + 1;
         $year = date('Y');
@@ -63,7 +67,7 @@ class TimesheetsRepository implements Repository
      * @param $uid
      * @return string
      */
-    public function getEntriesOfUserById($uid)
+    public function getEntriesOfUserById($uid) : string
     {
         return '/daily/?of_user' . $uid;
     }

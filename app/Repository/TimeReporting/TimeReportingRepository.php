@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Repository\TimeReporting;
 
@@ -15,7 +16,7 @@ class TimeReportingRepository implements Repository
      *
      * @return string
      */
-    public function getAll()
+    public function getAll() : string
     {
         return '/projects';
     }
@@ -26,7 +27,7 @@ class TimeReportingRepository implements Repository
      * @param $id
      * @return string
      */
-    public function getSingle($id)
+    public function getSingle($id) : string
     {
         return '/projects/' . $id;
     }
@@ -39,7 +40,7 @@ class TimeReportingRepository implements Repository
      * @param $to
      * @return string
      */
-    public function getAllEntriesForProjectTimeframe($pid, $from, $to)
+    public function getAllEntriesForProjectTimeframe($pid, $from, $to) : string
     {
         $from = date('Y-m-d', $from);
         $to = date('Y-m-d', $to);
@@ -55,7 +56,7 @@ class TimeReportingRepository implements Repository
      * @param $to
      * @return string
      */
-    public function getAllEntriesByUserIdForTimeframe($uid, $from, $to)
+    public function getAllEntriesByUserIdForTimeframe($uid, $from, $to) : string
     {
         $from = date('Y-m-d', $from);
         $to = date('Y-m-d', $to);
@@ -70,7 +71,7 @@ class TimeReportingRepository implements Repository
      * @param $uid
      * @return string
      */
-    public function getAllEntriesByProjectIdAndUserId($pid, $uid)
+    public function getAllEntriesByProjectIdAndUserId($pid, $uid) : string
     {
         return '/projects/' . $pid . '/entries?user_id=' . $uid;
     }
@@ -78,20 +79,21 @@ class TimeReportingRepository implements Repository
     /**
      * GET https://YOURACCOUNT.harvestapp.com/projects/{PROJECT_ID}/entries?from=YYYYMMDD&to=YYYYMMDD&updated_since=2010-09-25+18%3A30
      *
-     * @param $pid
-     * @param $from
-     * @param $to
+     * @param int $pid
+     * @param array $timeframe
      * @param $timestamp
      * @return string
      */
     public function getAllEntriesForProjectTimeframeUpdatedSinceByProjectId(
-        $pid,
-        $from,
-        $to,
-        $timestamp
-    ) {
-        $from = date('Y-m-d', $from);
-        $to = date('Y-m-d', $to);
+        $timestamp,
+        $pid = 0,
+        array $timeframe = [
+            'from' => 0,
+            'to' => 0
+        ]
+    ) : string {
+        $from = date('Y-m-d', $timeframe['from']);
+        $to = date('Y-m-d', $timeframe['to']);
 
         $date = date('Y-m-d', $timestamp);
         $time = date('H:i', $timestamp);
@@ -102,20 +104,21 @@ class TimeReportingRepository implements Repository
     /**
      * GET https://YOURACCOUNT.harvestapp.com/projects/{PROJECT_ID}/entries?from=YYYYMMDD&to=YYYYMMDD&billable=yes
      *
-     * @param $pid
-     * @param $from
-     * @param $to
+     * @param int $pid
+     * @param array $timeframe
      * @param string $billable
      * @return string
      */
     public function getAllEntriesByProjectIdForTimeFrameBillable(
-        $pid,
-        $from,
-        $to,
-        $billable = 'yes'
-    ) {
-        $from = date('Y-m-d', $from);
-        $to = date('Y-m-d', $to);
+        $billable = 'yes',
+        $pid = 0,
+        array $timeframe = [
+            'from' => 0,
+            'to' => 0
+        ]
+    ) : string {
+        $from = date('Y-m-d', $timeframe['from']);
+        $to = date('Y-m-d', $timeframe['to']);
 
         return '/projects/' . $pid .'/entries?from=' . $from . '&to=' . $to . '&billable=' . $billable;
     }
@@ -123,20 +126,21 @@ class TimeReportingRepository implements Repository
     /**
      * GET https://YOURACCOUNT.harvestapp.com/projects/{PROJECT_ID}/entries?from=YYYYMMDD&to=YYYYMMDD&only_billed=yes
      *
-     * @param $pid
-     * @param $from
-     * @param $to
      * @param string $onlybilled
+     * @param int $pid
+     * @param array $timeframe
      * @return string
      */
     public function getAllEntriesByProjectIdForTimeFrameOnlyBilled(
-        $pid,
-        $from,
-        $to,
-        $onlybilled = 'yes'
-    ) {
-        $from = date('Y-m-d', $from);
-        $to = date('Y-m-d', $to);
+        $onlybilled = 'yes',
+        $pid = 0,
+        array $timeframe = [
+            'from' => 0,
+            'to' => 0
+        ]
+    ) : string {
+        $from = date('Y-m-d', $timeframe['from']);
+        $to = date('Y-m-d', $timeframe['to']);
 
         return '/projects/' . $pid .'/entries?from=' . $from . '&to=' . $to . '&only_billed=' . $onlybilled;
     }
@@ -144,41 +148,43 @@ class TimeReportingRepository implements Repository
     /**
      * GET https://YOURACCOUNT.harvestapp.com/projects/{PROJECT_ID}/entries?from=YYYYMMDD&to=YYYYMMDD&only_unbilled=yes
      *
-     * @param $pid
-     * @param $from
-     * @param $to
      * @param string $onlyunbilled
+     * @param int $pid
+     * @param array $timeframe
      * @return string
      */
     public function getAllEntriesByProjectIdForTimeFrameOnlyUnBilled(
-        $pid,
-        $from,
-        $to,
-        $onlyunbilled = 'yes'
-    ) {
-        $from = date('Y-m-d', $from);
-        $to = date('Y-m-d', $to);
+        $onlyunbilled = 'yes',
+        $pid = 0,
+        array $timeframe = [
+            'from' => 0,
+            'to' => 0
+        ]
+    ) : string {
+        $from = date('Y-m-d', $timeframe['from']);
+        $to = date('Y-m-d', $timeframe['to']);
 
         return '/projects/' . $pid .'/entries?from=' . $from . '&to=' . $to . '&only_unbilled=' . $onlyunbilled;
     }
 
     /**
-     * GET https://YOURACCOUNT.harvestapp.com/projects/{PROJECT_ID}/entries?from=YYYYMMDD&to=YYYYMMDD&is_closed=no
+     * GET https://YOURACCOUNT.harvestapp.com/projects/{PROJECT_ID}/entries?from=YYYYMMDD&to=YYYYMMDD&is_closed=yes
      *
-     * @param $pid
-     * @param $from
-     * @param $to
      * @param string $isclosed
+     * @param int $pid
+     * @param array $timeframe
      * @return string
      */
     public function getAllClosedEntriesByProjectIdForTimeFrame(
-        $pid,
-        $from,
-        $to,
-        $isclosed = 'yes'
-    ) {
-        $from = date('Y-m-d', $from);
-        $to = date('Y-m-d', $to);
+        $isclosed = 'yes',
+        $pid = 0,
+        array $timeframe = [
+            'from' => 0,
+            'to' => 0
+        ]
+    ) : string {
+        $from = date('Y-m-d', $timeframe['from']);
+        $to = date('Y-m-d', $timeframe['to']);
 
         return '/projects/' . $pid .'/entries?from=' . $from . '&to=' . $to . '&is_closed=' . $isclosed;
     }

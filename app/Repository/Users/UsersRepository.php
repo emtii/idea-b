@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Repository\Users;
 
@@ -15,7 +16,7 @@ class UsersRepository implements Repository
      *
      * @return string
      */
-    public function getAll()
+    public function getAll() : string
     {
         return '/people';
     }
@@ -26,7 +27,7 @@ class UsersRepository implements Repository
      * @param $id
      * @return string
      */
-    public function getSingle($id)
+    public function getSingle($id) : string
     {
         return '/people/' . $id;
     }
@@ -37,7 +38,7 @@ class UsersRepository implements Repository
      * @param $timestamp
      * @return string
      */
-    public function getUserUpdatedSince($timestamp)
+    public function getUserUpdatedSince($timestamp) : string
     {
         $date = date('Y-m-d', $timestamp);
         $time = date('H:i', $timestamp);
