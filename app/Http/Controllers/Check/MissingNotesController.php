@@ -9,6 +9,7 @@ use App\Repository\Mapper\TimesheetMapper;
 use App\Repository\Mapper\UserMapper;
 use App\Repository\TimesheetsRepository;
 use App\Repository\UsersRepository;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Class MissingNotesController
@@ -28,7 +29,6 @@ class MissingNotesController extends Controller
      * @var UsersRepository $user
      */
     private $user;
-
     /**
      * @var UserMapper $userMapper
      */
@@ -52,32 +52,45 @@ class MissingNotesController extends Controller
 
     /**
      * Run this Check Up.
+     *
+     * @return boolean
      */
-    public function run() : void
+    public function run() : bool
     {
+        Log::info('CHECK > MISSING NOTES - get todays time entries');
         // get today's time entries
         $entries = $this->api->getResponse(
             $this->timesheets->getEntriesForCurrentDay()
         );
 
-        foreach ($entries['day_entries'] as $entry) {
-            // set timesheet data
-            $day = $this->timesheetMapper->setTimesheetData($entry);
+        if (is_array($entries) || !empty($entries)) {
+            Log::info('CHECK > MISSING NOTES - found entries, iterate them now.');
 
-            // check for faulty notes
-            if ($this->hasMissingNotes($day->getNotes())) {
-                // get single user by his id
-                $user = $this->user->getSingle(
-                    $day->getUserId()
-                );
+            foreach ($entries['day_entries'] as $entry) {
+                // set timesheet data
+                $day = $this->timesheetMapper->setTimesheetData($entry);
 
-                // set user data
-                $user = $this->userMapper->setUserData($user);
+                // check for faulty notes
+                if ($this->hasMissingNotes($day->getNotes())) {
+                    Log::warning('CHECK > MISSING NOTES - found faulty entry with id: ' . $day->getId());
 
-                // send mail
-                $this->sendMail($user->getEmail());
+                    // get single user by his id
+                    $user = $this->user->getSingle(
+                        $day->getUserId()
+                    );
+
+                    // set user data
+                    $user = $this->userMapper->setUserData($user);
+                    Log::notice('CHECK > MISSING NOTES - last faulty entry was done by: ' . $user->getEmail());
+
+                    // send mail
+                    $this->sendMail($user->getEmail());
+                }
             }
         }
+        Log::info('CHECK > MISSING NOTES - found no entries, nothing to do for now.');
+
+        return true;
     }
 
     /**
@@ -92,8 +105,15 @@ class MissingNotesController extends Controller
         return $notes === '' || $notes === null;
     }
 
+    /**
+     * Send eMail to Customer about his faulty note in his timesheet.
+     * @param $userMail
+     * @return bool
+     */
     private function sendMail($userMail) : bool
     {
         // TODO: Use Laravel Mailer Component here
+
+        return true;
     }
 }

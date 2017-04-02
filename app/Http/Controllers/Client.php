@@ -38,6 +38,8 @@ class Client extends Controller
      */
     public function getResponse($request) : array
     {
+        // TODO: Refactor to Guzzle
+
         if ($this->requestExists($request)) {
             trim($request);
 

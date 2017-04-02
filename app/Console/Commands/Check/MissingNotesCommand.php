@@ -5,6 +5,7 @@ namespace App\Console\Commands\Check;
 
 use App\Http\Controllers\Check\MissingNotesController;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class MissingNotesCommand extends Command
 {
@@ -29,8 +30,12 @@ class MissingNotesCommand extends Command
      */
     public function handle()
     {
+        Log::info('CHECK > MISSING NOTES - START');
+
         $missingnotes = new MissingNotesController();
         $missingnotes->run();
+
+        Log::info('CHECK > MISSING NOTES - END');
 
         return true;
     }
