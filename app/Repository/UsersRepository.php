@@ -1,13 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Repository\Users;
-
-use App\Repository\Repository;
+namespace App\Repository;
 
 /**
  * Class UsersRepository
- * @package App\Repository\Users
+ * @package App\Repository
  */
 class UsersRepository implements Repository
 {

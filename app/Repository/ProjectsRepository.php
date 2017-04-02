@@ -1,12 +1,11 @@
 <?php
+declare(strict_types=1);
 
-namespace App\Repository\Projects;
-
-use App\Repository\Repository;
+namespace App\Repository;
 
 /**
  * Class ProjectsRepository
- * @package App\Repository\Projects
+ * @package App\Repository
  */
 class ProjectsRepository implements Repository
 {

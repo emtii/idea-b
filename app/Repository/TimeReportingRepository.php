@@ -1,13 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Repository\TimeReporting;
-
-use App\Repository\Repository;
+namespace App\Repository;
 
 /**
  * Class TimeReporting
- * @package App\Repository\TimeReporting
+ * @package App\Repository
  */
 class TimeReportingRepository implements Repository
 {

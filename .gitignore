@@ -2,10 +2,9 @@
 /public/storage
 /public/hot
 /storage/*.key
-/vendor
 /build/logs
 /build/coverage
-
+/vendor
 /.idea
 
 .env

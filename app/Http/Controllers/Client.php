@@ -81,10 +81,6 @@ class Client extends Controller
      */
     private function requestExists($request) : bool
     {
-        if ($request !== null || $request !== '') {
-            return true;
-        } else {
-            return false;
-        }
+        return $request !== null || $request !== '';
     }
 }
