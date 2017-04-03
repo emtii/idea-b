@@ -7,7 +7,7 @@ namespace App\Repository;
  * Class UsersRepository
  * @package App\Repository
  */
-class UsersRepository implements Repository
+class UsersRepository implements RepositoryInterface
 {
     /**
      * https://YOURACCOUNT.harvestapp.com/people

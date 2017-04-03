@@ -11,6 +11,7 @@
 .env.example
 .gitattributes
 .DS_Store
+.phpstorm.meta.php
 
 Homestead.json
 Homestead.yaml

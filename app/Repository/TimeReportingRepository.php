@@ -7,7 +7,7 @@ namespace App\Repository;
  * Class TimeReporting
  * @package App\Repository
  */
-class TimeReportingRepository implements Repository
+class TimeReportingRepository implements RepositoryInterface
 {
     /**
      * GET https://YOURACCOUNT.harvestapp.com/projects

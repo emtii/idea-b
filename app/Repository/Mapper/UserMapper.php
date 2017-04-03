@@ -11,23 +11,23 @@ class UserMapper
     {
         $user = new User();
 
-        $user->setId($data['id']);
-        $user->setEmail($data['email']);
-        $user->setCreatedAt($data['created_at']);
-        $user->setIsAdmin($data['is_admin']);
-        $user->setFirstName($data['first_name']);
-        $user->setLastName($data['last_name']);
-        $user->setTimezone($data['timezone']);
-        $user->setIsContractor($data['is_contractor']);
-        $user->setTelephone($data['telephone']);
-        $user->setIsActive($data['is_active']);
-        $user->setHasAccessToAllFutureProjects($data['has_access_to_all_future_projects']);
-        $user->setDefaultHourlyRate($data['default_hourly_rate']);
-        $user->setDepartment($data['department']);
-        $user->setWantsNewsletter($data['wants_newsletter']);
-        $user->setUpdatedAt($data['updated_at']);
-        $user->setCostRate($data['cost_rate']);
-        $user->setWeeklyCapacity($data['weekly_capacity']);
+        $user->setId($data['user']['id']);
+        $user->setEmail($data['user']['email']);
+        $user->setCreatedAt($data['user']['created_at']);
+        $user->setIsAdmin($data['user']['is_admin']);
+        $user->setFirstName($data['user']['first_name']);
+        $user->setLastName($data['user']['last_name']);
+        $user->setTimezone($data['user']['timezone']);
+        $user->setIsContractor($data['user']['is_contractor']);
+        $user->setTelephone($data['user']['telephone']);
+        $user->setIsActive($data['user']['is_active']);
+        $user->setHasAccessToAllFutureProjects($data['user']['has_access_to_all_future_projects']);
+        $user->setDefaultHourlyRate($data['user']['default_hourly_rate']);
+        $user->setDepartment($data['user']['department']);
+        $user->setWantsNewsletter($data['user']['wants_newsletter']);
+        $user->setUpdatedAt($data['user']['updated_at']);
+        $user->setCostRate($data['user']['cost_rate']);
+        $user->setWeeklyCapacity($data['user']['weekly_capacity']);
 
         return $user;
     }

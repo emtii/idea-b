@@ -2,6 +2,7 @@
 
 namespace App\Mail\Check;
 
+use App\Models\Timesheet;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
@@ -10,11 +11,11 @@ class MissingNotesMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $entry;
+    public $day;
 
-    public function __construct($entry)
+    public function __construct(Timesheet $day)
     {
-        $this->entry = $entry;
+        $this->day = $day;
     }
 
     /**

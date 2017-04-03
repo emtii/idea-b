@@ -3,11 +3,12 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+
 /**
  * Class TimesheetsRepository
  * @package App\Repository
  */
-class TimesheetsRepository implements Repository
+class TimesheetsRepository implements RepositoryInterface
 {
     /**
      * GET https://YOURACCOUNT.harvestapp.com/daily

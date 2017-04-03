@@ -5,11 +5,14 @@ namespace App\Http\Controllers\Check;
 
 use App\Http\Controllers\Client;
 use App\Http\Controllers\Controller;
+use App\Mail\Check\MissingNotesMail;
+use App\Models\Timesheet;
 use App\Repository\Mapper\TimesheetMapper;
 use App\Repository\Mapper\UserMapper;
 use App\Repository\TimesheetsRepository;
 use App\Repository\UsersRepository;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 /**
  * Class MissingNotesController
@@ -24,7 +27,7 @@ class MissingNotesController extends Controller
     /**
      * @var TimesheetsRepository $timesheets
      */
-    private $timesheets;
+    public $timesheets;
     /**
      * @var UsersRepository $user
      */
@@ -63,6 +66,9 @@ class MissingNotesController extends Controller
             $this->timesheets->getEntriesForCurrentDay()
         );
 
+        // failure count
+        $failures = 0;
+
         if (is_array($entries) || !empty($entries)) {
             Log::info('CHECK > MISSING NOTES - found entries, iterate them now.');
 
@@ -70,25 +76,36 @@ class MissingNotesController extends Controller
                 // set timesheet data
                 $day = $this->timesheetMapper->setTimesheetData($entry);
 
+                Log::info('CHECK > MISSING NOTES - check time entry id: ' . $day->getId());
+
                 // check for faulty notes
                 if ($this->hasMissingNotes($day->getNotes())) {
                     Log::warning('CHECK > MISSING NOTES - found faulty entry with id: ' . $day->getId());
 
+                    $failures++;
+
                     // get single user by his id
-                    $user = $this->user->getSingle(
-                        $day->getUserId()
+                    $user = $this->api->getResponse(
+                        $this->user->getSingle(
+                            $day->getUserId()
+                        )
                     );
 
                     // set user data
                     $user = $this->userMapper->setUserData($user);
+
                     Log::notice('CHECK > MISSING NOTES - last faulty entry was done by: ' . $user->getEmail());
 
                     // send mail
-                    $this->sendMail($user->getEmail());
+                    $this->sendMail($user->getEmail(), $day);
                 }
             }
         }
-        Log::info('CHECK > MISSING NOTES - found no entries, nothing to do for now.');
+
+        if ($failures <= 0) {
+            Log::info('CHECK > MISSING NOTES - found no entries, nothing to do for now.');
+        }
+
 
         return true;
     }
@@ -107,12 +124,18 @@ class MissingNotesController extends Controller
 
     /**
      * Send eMail to Customer about his faulty note in his timesheet.
-     * @param $userMail
+     * @param string $userMail
+     * @param Timesheet $day
      * @return bool
      */
-    private function sendMail($userMail) : bool
+    private function sendMail(string $userMail, Timesheet $day) : bool
     {
-        // TODO: Use Laravel Mailer Component here
+        Log::notice('CHECK > MISSING NOTES - start send mail to ' . $userMail);
+
+        Mail::to($userMail)
+            ->send(new MissingNotesMail($day));
+
+        Log::notice('CHECK > MISSING NOTES - end send mail to ' . $userMail);
 
         return true;
     }

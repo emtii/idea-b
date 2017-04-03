@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-interface Repository
+interface RepositoryInterface
 {
     /**
      * Return string to get all items from api
