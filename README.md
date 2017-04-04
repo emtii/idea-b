@@ -1,4 +1,5 @@
 # idea-b
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/emtii/idea-b/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/emtii/idea-b/?branch=master) [![Build Status](https://scrutinizer-ci.com/g/emtii/idea-b/badges/build.png?b=master)](https://scrutinizer-ci.com/g/emtii/idea-b/build-status/master) [![Code Coverage](https://scrutinizer-ci.com/g/emtii/idea-b/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/emtii/idea-b/?branch=master)
 
 ## About B
 

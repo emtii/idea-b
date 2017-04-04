@@ -1,0 +1,19 @@
+filter:
+    paths:
+        - 'app/*'
+    excluded_paths:
+checks:
+    php:
+        code_rating: true
+        duplication: true
+    javascript: true
+coding_style:
+    php:
+        spaces:
+            around_operators:
+                concatenation: true
+tools:
+    php_code_sniffer:
+        config:
+          standard: PSR2
+build: true
