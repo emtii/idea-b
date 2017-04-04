@@ -51,5 +51,38 @@ class MissingTimeEntriesController extends Controller
 
     public function run()
     {
+        $users = $this->getAllUserFromHarvest();
+
+        if ($users) {
+            foreach ($users as $user) {
+                $uid = $this->getUserIdFromHarvest($user);
+
+                if ($uid) {
+                    $timesheet = $this->getTimesheetsFromHarvestByUserId($uid);
+
+                    // TODO: check for times < 4 hours
+                }
+            }
+        }
+    }
+
+    private function getAllUserFromHarvest()
+    {
+        return $this->api->getResponse(
+            $this->user->getAll()
+        );
+    }
+
+    private function getUserIdFromHarvest($user)
+    {
+        $u = $this->userMapper->setUserData($user);
+        return $u->getId();
+    }
+
+    private function getTimesheetsFromHarvestByUserId($uid)
+    {
+        return $this->api->getResponse(
+            $this->timesheets->getEntriesOfUserById($uid)
+        );
     }
 }

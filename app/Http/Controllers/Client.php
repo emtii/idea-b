@@ -22,6 +22,8 @@ class Client extends Controller
      */
     private $harvest_api_pass;
 
+    private $client;
+
     /**
      * Client constructor.
      */
@@ -30,6 +32,8 @@ class Client extends Controller
         $this->harvest_api_base_url = env('HARVEST_API_BASE_URL');
         $this->harvest_api_user = env('HARVEST_API_USER');
         $this->harvest_api_pass = env('HARVEST_API_PASS');
+
+        $this->client = new Client();
     }
 
     /**
