@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Check;
 
+use App\Events\MissingNote;
 use App\Http\Controllers\Client;
 use App\Http\Controllers\Controller;
 use App\Mail\Check\MissingNotesMail;
@@ -96,8 +97,8 @@ class MissingNotesController extends Controller
 
                     Log::notice('CHECK > MISSING NOTES - last faulty entry was done by: ' . $user->getEmail());
 
-                    // send mail
-                    $this->sendMail($user->getEmail(), $day);
+                    /* Dispatch event, let listeners handle the heavy lifting. */
+                    event(new MissingNote($user, $day));
                 }
             }
         }
@@ -105,7 +106,6 @@ class MissingNotesController extends Controller
         if ($failures <= 0) {
             Log::info('CHECK > MISSING NOTES - found no entries, nothing to do for now.');
         }
-
 
         return true;
     }
@@ -117,7 +117,7 @@ class MissingNotesController extends Controller
      */
     private function hasMissingNotes($notes) : bool
     {
-        trim($notes);
+        $notes = trim($notes);
 
         return $notes === '' || $notes === null;
     }
@@ -127,6 +127,7 @@ class MissingNotesController extends Controller
      * @param string $userMail
      * @param Timesheet $day
      * @return bool
+     * @todo move this to a listener.
      */
     private function sendMail(string $userMail, Timesheet $day) : bool
     {
