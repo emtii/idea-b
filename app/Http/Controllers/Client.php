@@ -39,6 +39,7 @@ class Client extends Controller
     public function getResponse($request) : array
     {
         // TODO: Refactor to Guzzle
+        // TODO: move API to its own package.
 
         if ($this->requestExists($request)) {
             trim($request);
