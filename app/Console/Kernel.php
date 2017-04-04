@@ -3,7 +3,6 @@
 namespace App\Console;
 
 use App\Console\Commands\Check\MissingNotesCommand;
-use App\Console\Commands\Check\MissingTimeEntries;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -15,8 +14,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        MissingNotesCommand::class,
-        MissingTimeEntries::class
+        MissingNotesCommand::class
     ];
 
     /**
