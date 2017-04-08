@@ -1,19 +1,15 @@
-<?php
-declare(strict_types=1);
+<?php declare(strict_types = 1);
 
 namespace App\Http\Controllers\Check;
 
 use App\Events\MissingNote;
 use App\Http\Controllers\Client;
 use App\Http\Controllers\Controller;
-use App\Mail\Check\MissingNotesMail;
-use App\Models\Timesheet;
 use App\Repository\Mapper\TimesheetMapper;
 use App\Repository\Mapper\UserMapper;
 use App\Repository\TimesheetsRepository;
 use App\Repository\UsersRepository;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 
 /**
  * Class MissingNotesController
@@ -21,26 +17,20 @@ use Illuminate\Support\Facades\Mail;
  */
 class MissingNotesController extends Controller
 {
-    /**
-     * @var Client $api
-     */
-    private $api;
+    const LOG_PREFIX = 'CHECK > MISSING NOTES - ';
+
     /**
      * @var TimesheetsRepository $timesheets
      */
     public $timesheets;
     /**
+     * @var Client $api
+     */
+    private $api;
+    /**
      * @var UsersRepository $user
      */
     private $user;
-    /**
-     * @var UserMapper $userMapper
-     */
-    private $userMapper;
-    /**
-     * @var TimesheetMapper $timesheetMapper
-     */
-    private $timesheetMapper;
 
     /**
      * MissingNotesController constructor.
@@ -50,64 +40,93 @@ class MissingNotesController extends Controller
         $this->api = new Client();
         $this->timesheets = new TimesheetsRepository();
         $this->user = new UsersRepository();
-        $this->userMapper = new UserMapper();
-        $this->timesheetMapper = new TimesheetMapper();
     }
 
     /**
      * Run this Check Up.
      *
-     * @return boolean
+     * @return array
      */
-    public function run() : bool
+    public function run() : array
     {
-        Log::info('CHECK > MISSING NOTES - get todays time entries');
-        // get today's time entries
-        $entries = $this->api->getResponse(
-            $this->timesheets->getEntriesForCurrentDay()
-        );
-
-        // failure count
         $failures = 0;
+        $count = 0;
 
-        if (is_array($entries) || !empty($entries)) {
-            Log::info('CHECK > MISSING NOTES - found entries, iterate them now.');
+        $this->logNotice('get entries for today.');
 
-            foreach ($entries['day_entries'] as $entry) {
-                // set timesheet data
-                $day = $this->timesheetMapper->setTimesheetData($entry);
+        $entries = $this->getDaily();
 
-                Log::info('CHECK > MISSING NOTES - check time entry id: ' . $day->getId());
+        if ($this->entriesExist($entries)) {
+            $this->logNotice('found time entries for today.');
 
-                // check for faulty notes
-                if ($this->hasMissingNotes($day->getNotes())) {
-                    Log::warning('CHECK > MISSING NOTES - found faulty entry with id: ' . $day->getId());
+            foreach ($entries as $entry) {
+                // count checked entries
+                $count++;
+
+                // create timesheet out of entry
+                $timesheetMapper = new TimesheetMapper();
+                $ts = $timesheetMapper->setTimesheetData($entry);
+                $this->logNotice('check entry id: ' . $ts->getId());
+
+                // check if entry has missing notes
+                if ($this->hasMissingNotes($ts->getNotes())) {
+                    $this->logNotice('note faulty');
 
                     $failures++;
 
-                    // get single user by his id
-                    $user = $this->api->getResponse(
-                        $this->user->getSingle(
-                            $day->getUserId()
-                        )
-                    );
-
-                    // set user data
-                    $user = $this->userMapper->setUserData($user);
-
-                    Log::notice('CHECK > MISSING NOTES - last faulty entry was done by: ' . $user->getEmail());
+                    // create user
+                    $user = $this->getUserById($ts->getUserId());
+                    $userMapper = new UserMapper();
+                    $u = $userMapper->setUserData($user);
 
                     /* Dispatch event, let listeners handle the heavy lifting. */
-                    event(new MissingNote($user, $day));
+                    event(new MissingNote($u, $ts));
+                } else {
+                    $this->logNotice('note given.');
                 }
             }
         }
 
-        if ($failures <= 0) {
-            Log::info('CHECK > MISSING NOTES - found no entries, nothing to do for now.');
+        if ($failures === 0) {
+            $this->logNotice('great, found no faulty entries, nothing to do for now.');
         }
 
-        return true;
+        return [
+            'count' => $count,
+            'failures' => $failures
+        ];
+    }
+
+    /**
+     * Helper for logging.
+     * @param $notice
+     */
+    private function logNotice($notice)
+    {
+        LOG::notice(self::LOG_PREFIX . $notice);
+    }
+
+    /**
+     * Get all time entries of today from api.
+     * @return array
+     */
+    private function getDaily() : array
+    {
+        $day = $this->api->getResponse(
+            $this->timesheets->getAll()
+        );
+
+        return $day['day_entries'];
+    }
+
+    /**
+     * Check for existing entries.
+     * @param array $entries
+     * @return bool
+     */
+    private function entriesExist(array $entries) : bool
+    {
+        return is_array($entries) && !empty($entries);
     }
 
     /**
@@ -123,21 +142,16 @@ class MissingNotesController extends Controller
     }
 
     /**
-     * Send eMail to Customer about his faulty note in his timesheet.
-     * @param string $userMail
-     * @param Timesheet $day
-     * @return bool
-     * @todo move this to a listener.
+     * Get user data by id from api.
+     * @param $uid
+     * @return array
      */
-    private function sendMail(string $userMail, Timesheet $day) : bool
+    private function getUserById($uid)
     {
-        Log::notice('CHECK > MISSING NOTES - start send mail to ' . $userMail);
+        $user = $this->api->getResponse(
+            $this->user->getSingle($uid)
+        );
 
-        Mail::to($userMail)
-            ->send(new MissingNotesMail($day));
-
-        Log::notice('CHECK > MISSING NOTES - end send mail to ' . $userMail);
-
-        return true;
+        return $user;
     }
 }

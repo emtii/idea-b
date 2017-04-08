@@ -1,5 +1,4 @@
-<?php
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace App\Console\Commands\Check;
 
@@ -26,17 +25,19 @@ class MissingNotesCommand extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
+     * @return void
      */
     public function handle()
     {
-        Log::info('CHECK > MISSING NOTES - START');
+        Log::notice('CHECK > MISSING NOTES - START');
 
         $missingnotes = new MissingNotesController();
-        $missingnotes->run();
+        $result = $missingnotes->run();
 
-        Log::info('CHECK > MISSING NOTES - END');
-
-        return true;
+        Log::notice('CHECK > MISSING NOTES - END, result:');
+        Log::notice(
+            'count => ' . $result['count'] .
+            'failures => ' . $result['failures']
+        );
     }
 }

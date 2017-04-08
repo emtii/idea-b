@@ -168,7 +168,7 @@ return [
          */
         Laravel\Tinker\TinkerServiceProvider::class,
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
-        Bestit\HipChat\HipChatServiceProvider::class,
+        //Bestit\HipChat\HipChatServiceProvider::class,
 
         /*
          * Application Service Providers...

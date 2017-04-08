@@ -7,7 +7,7 @@ use App\Models\User;
 
 class UserMapper
 {
-    public function setUserData(array $data)
+    public function setUserData($data)
     {
         $user = new User();
 

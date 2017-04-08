@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1)
 
 namespace App\Listeners;
 
@@ -8,17 +8,14 @@ use Bestit\HipChat\Facade\HipChat;
 class SendMissingNoteHipChatNotification
 {
     /**
-     * Handle the event.
-     *
-     * @param  MissingNote  $event
-     * @return void
+     * @inheritdoc
      */
     public function handle(MissingNote $event)
     {
         $user = $event->user;
         $timeSheet = $event->timeSheet;
 
-        //TODO: find out what information actually needs to be sent instead of the id.
+        // todo: find out what information actually needs to be sent instead of the id.
         HipChat::user($user->getEmail())
             ->notify("Hello, it seems like you have done something wrong on the time entry with the ID of {$timeSheet->getId()}", true);
     }
