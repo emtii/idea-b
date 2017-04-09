@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace App\Listeners;
 
@@ -17,8 +15,18 @@ class SendMissingNoteHipChatNotification
         $user = $event->user;
         $timeSheet = $event->timeSheet;
 
-        // todo: find out what information actually needs to be sent instead of the id.
+        // send info to user
         HipChat::user($user->getEmail())
-            ->notify("Hello, it seems like you have done something wrong on the time entry with the ID of {$timeSheet->getId()}", true);
+            ->notify(
+                "Todays work on {$timeSheet->getProject()} with id {$timeSheet->getId()} is faulty.",
+                true
+            );
+
+        // todo: random blame message to room
+        //HipChat::room('Allgemein')
+        //  ->notify('
+        //      B says: Oooppssss... found faulty time entries',
+        //      true
+        //);
     }
 }

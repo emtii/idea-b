@@ -37,7 +37,7 @@ class MissingNotesCommand extends Command
         Log::notice('CHECK > MISSING NOTES - END, result:');
         Log::notice(
             'count => ' . $result['count'] .
-            'failures => ' . $result['failures']
+            ' failures => ' . $result['failures']
         );
     }
 }

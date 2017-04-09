@@ -14,14 +14,18 @@ This is B.
 - check for budget status of project and report to project managers
 - check for less than 4 hours booked yesterday
 
+## Usage
+
+- todo
+
 ## Security Vulnerabilities
 
-todo
+- todo
 
 ## Contributing
 
-todo
+- todo
 
 ## License
 
-todo
+- todo

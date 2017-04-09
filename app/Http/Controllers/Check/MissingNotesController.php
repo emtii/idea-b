@@ -33,6 +33,16 @@ class MissingNotesController extends Controller
     private $user;
 
     /**
+     * @var $failures
+     */
+    private $failures = 0;
+
+    /**
+     * @var $count
+     */
+    private $count = 0;
+
+    /**
      * MissingNotesController constructor.
      */
     public function __construct()
@@ -49,9 +59,6 @@ class MissingNotesController extends Controller
      */
     public function run() : array
     {
-        $failures = 0;
-        $count = 0;
-
         $this->logNotice('get entries for today.');
 
         $entries = $this->getDaily();
@@ -61,7 +68,7 @@ class MissingNotesController extends Controller
 
             foreach ($entries as $entry) {
                 // count checked entries
-                $count++;
+                $this->count++;
 
                 // create timesheet out of entry
                 $timesheetMapper = new TimesheetMapper();
@@ -72,7 +79,7 @@ class MissingNotesController extends Controller
                 if ($this->hasMissingNotes($ts->getNotes())) {
                     $this->logNotice('note faulty');
 
-                    $failures++;
+                    $this->failures++;
 
                     // create user
                     $user = $this->getUserById($ts->getUserId());
@@ -87,13 +94,13 @@ class MissingNotesController extends Controller
             }
         }
 
-        if ($failures === 0) {
+        if ($this->failures === 0) {
             $this->logNotice('great, found no faulty entries, nothing to do for now.');
         }
 
         return [
-            'count' => $count,
-            'failures' => $failures
+            'count' => $this->count,
+            'failures' => $this->failures
         ];
     }
 
@@ -103,7 +110,7 @@ class MissingNotesController extends Controller
      */
     private function logNotice($notice)
     {
-        LOG::notice(self::LOG_PREFIX . $notice);
+        Log::notice(self::LOG_PREFIX . $notice);
     }
 
     /**
