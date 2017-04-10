@@ -59,7 +59,9 @@ class MissingTimeEntriesController extends Controller
                 if ($uid) {
                     $timesheet = $this->getTimesheetsFromHarvestByUserId($uid);
 
-                    // TODO: check for times < 4 hours
+                    // todo: check for times < 4 hours
+
+                    // todo: check for time entries <= 0
                 }
             }
         }
