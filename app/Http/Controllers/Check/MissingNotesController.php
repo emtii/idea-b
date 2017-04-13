@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Check;
 
 use App\Events\MissingNote;
 use App\Http\Controllers\Client;
-use App\Http\Controllers\Controller;
 use App\Repository\Mapper\TimesheetMapper;
 use App\Repository\Mapper\UserMapper;
 use App\Repository\TimesheetsRepository;
@@ -15,31 +14,19 @@ use Illuminate\Support\Facades\Log;
  * Class MissingNotesController
  * @package App\Http\Controllers\Check
  */
-class MissingNotesController extends Controller
+class MissingNotesController extends CheckBaseController
 {
     const LOG_PREFIX = 'CHECK > MISSING NOTES - ';
 
-    /**
-     * @var TimesheetsRepository $timesheets
-     */
+    /** @var TimesheetsRepository $timesheets */
     public $timesheets;
-    /**
-     * @var Client $api
-     */
+    /** @var Client $api */
     private $api;
-    /**
-     * @var UsersRepository $user
-     */
+    /** @var UsersRepository $user */
     private $user;
-
-    /**
-     * @var $failures
-     */
+    /** @var $failures */
     private $failures = 0;
-
-    /**
-     * @var $count
-     */
+    /** @var $count */
     private $count = 0;
 
     /**
@@ -63,7 +50,7 @@ class MissingNotesController extends Controller
 
         $entries = $this->getDaily();
 
-        if ($this->entriesExist($entries)) {
+        if ($this->entriesExist($entries) === true) {
             $this->logNotice('found time entries for today.');
 
             foreach ($entries as $entry) {
@@ -95,7 +82,7 @@ class MissingNotesController extends Controller
         }
 
         if ($this->failures === 0) {
-            $this->logNotice('great, found no faulty entries, nothing to do for now.');
+            $this->logNotice(self::LOG_PREFIX . 'great, found no faulty entries, nothing to do for now.');
         }
 
         return [
@@ -124,16 +111,6 @@ class MissingNotesController extends Controller
         );
 
         return $day['day_entries'];
-    }
-
-    /**
-     * Check for existing entries.
-     * @param array $entries
-     * @return bool
-     */
-    private function entriesExist(array $entries) : bool
-    {
-        return is_array($entries) && !empty($entries);
     }
 
     /**

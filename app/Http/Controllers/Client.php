@@ -21,8 +21,6 @@ class Client extends Controller
      */
     private $harvest_api_pass;
 
-    private $client;
-
     /**
      * Client constructor.
      */

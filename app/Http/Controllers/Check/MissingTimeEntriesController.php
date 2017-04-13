@@ -2,39 +2,31 @@
 
 namespace App\Http\Controllers\Check;
 
+use App\Events\MissingTimeEntry;
 use App\Http\Controllers\Client;
-use App\Http\Controllers\Controller;
-use App\Repository\Mapper\TimesheetMapper;
 use App\Repository\Mapper\UserMapper;
 use App\Repository\TimesheetsRepository;
 use App\Repository\UsersRepository;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Class MissingTimeEntriesController
  * @package App\Http\Controllers\Check
  */
-class MissingTimeEntriesController extends Controller
+class MissingTimeEntriesController extends CheckBaseController
 {
-    /**
-     * @var Client $api
-     */
+    const LOG_PREFIX = 'CHECK > MISSING TIME ENTRIES - ';
+
+    /** @var Client $api */
     private $api;
-    /**
-     * @var TimesheetsRepository $timesheets
-     */
+    /** @var TimesheetsRepository $timesheets */
     public $timesheets;
-    /**
-     * @var UsersRepository $user
-     */
+    /** @var UsersRepository $user */
     private $user;
-    /**
-     * @var UserMapper $userMapper
-     */
-    private $userMapper;
-    /**
-     * @var TimesheetMapper $timesheetMapper
-     */
-    private $timesheetMapper;
+    /** @var int $failures */
+    private $failures = 0;
+    /** @var int count */
+    private $count = 0;
 
     /**
      * MissingTimeEntriesController constructor.
@@ -44,46 +36,72 @@ class MissingTimeEntriesController extends Controller
         $this->api = new Client();
         $this->timesheets = new TimesheetsRepository();
         $this->user = new UsersRepository();
-        $this->userMapper = new UserMapper();
-        $this->timesheetMapper = new TimesheetMapper();
     }
 
     public function run()
     {
         $users = $this->getAllUserFromHarvest();
 
-        if ($users) {
+        if ($this->entriesExist($users)) {
+            Log::notice(self::LOG_PREFIX . 'Users found, check every user now.');
+
             foreach ($users as $user) {
+                $this->count++;
+
                 $uid = $this->getUserIdFromHarvest($user);
 
-                if ($uid) {
-                    $timesheet = $this->getTimesheetsFromHarvestByUserId($uid);
+                if ($uid !== null) {
+                    LOG::notice(self::LOG_PREFIX . 'check entries of user: ' . $uid);
 
-                    // todo: check for times < 4 hours
+                    $entries = $this->getTimeEntriesFromHarvestByUserId($uid);
 
-                    // todo: check for time entries <= 0
+                    if ($this->entriesExist($entries) === false) {
+                        $this->failures++;
+
+                        LOG::notice(self::LOG_PREFIX . 'entries do not exist - fire event.');
+
+                        $userMapper = new UserMapper();
+                        $u = $userMapper->setUserData($user);
+
+                        event(new MissingTimeEntry($u));
+                    } else {
+                        LOG::notice(self::LOG_PREFIX . 'entries exist - do nothing.');
+                    }
                 }
             }
         }
+
+        if ($this->failures === 0) {
+            $this->logNotice(self::LOG_PREFIX . 'great, found no missing time entries, nothing to do for now.');
+        }
+
+        return [
+            'count' => $this->count,
+            'failures' => $this->failures
+        ];
     }
 
-    private function getAllUserFromHarvest()
+    private function getAllUserFromHarvest() : array
     {
         return $this->api->getResponse(
             $this->user->getAll()
         );
     }
 
-    private function getUserIdFromHarvest($user)
+    private function getUserIdFromHarvest($user) : int
     {
-        $u = $this->userMapper->setUserData($user);
-        return $u->getId();
+        $um = new UserMapper();
+        $user = $um->setUserData($user);
+
+        return (int) $user->getId();
     }
 
-    private function getTimesheetsFromHarvestByUserId($uid)
+    private function getTimeEntriesFromHarvestByUserId($uid) : array
     {
-        return $this->api->getResponse(
-            $this->timesheets->getEntriesOfUserById($uid)
+        $day = $this->api->getResponse(
+            $this->timesheets->getDailyOfUser($uid)
         );
+
+        return $day['day_entries'];
     }
 }

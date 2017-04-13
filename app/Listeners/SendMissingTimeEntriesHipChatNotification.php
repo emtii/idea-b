@@ -2,32 +2,29 @@
 
 namespace App\Listeners;
 
-use App\Events\MissingNote;
+use App\Events\MissingTimeEntry;
 use Bestit\HipChat\Facade\HipChat;
 
-class SendMissingNoteHipChatNotification
+class SendMissingTimeEntriesHipChatNotification
 {
     /**
-     * Handles the Event, send message to hipchat
-     * @param $event MissingNote
-     * @return void
+     *
      */
-    public function handle(MissingNote $event)
+    public function handle(MissingTimeEntry $event)
     {
         $user = $event->user;
-        $timeSheet = $event->timeSheet;
 
         // send info to user
         HipChat::user($user->getEmail())
             ->notify(
-                "Todays work on {$timeSheet->getProject()} with id {$timeSheet->getId()} is faulty.",
+                "There where no time entries by you yesterday. What was wrong?",
                 true
             );
 
         // todo: random anonymous blame message to room
         //HipChat::room('Allgemein')
         //  ->notify('
-        //      B says: Oooppssss... found faulty time entries',
+        //      B says: Oooppssss... found missing time entries',
         //      true
         //);
     }
