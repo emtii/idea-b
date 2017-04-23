@@ -169,6 +169,7 @@ return [
         Laravel\Tinker\TinkerServiceProvider::class,
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
         Bestit\HipChat\HipChatServiceProvider::class,
+        BestIt\Harvest\HarvestServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -228,6 +229,8 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'HipChat' => Bestit\HipChat\Facade\HipChat::class,
+        'Harvest' => BestIt\Harvest\Facade\Harvest::class,
+
 
     ],
 

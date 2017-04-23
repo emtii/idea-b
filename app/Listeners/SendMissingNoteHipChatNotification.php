@@ -8,19 +8,17 @@ use Bestit\HipChat\Facade\HipChat;
 class SendMissingNoteHipChatNotification
 {
     /**
-     * Handles the Event, send message to hipchat
-     * @param $event MissingNote
+     * Handles the event, sends a message to the user on HipChat.
+     *
+     * @param MissingNote $event
      * @return void
      */
     public function handle(MissingNote $event)
     {
-        $user = $event->user;
-        $timeSheet = $event->timeSheet;
-
         // send info to user
-        HipChat::user($user->getEmail())
+        HipChat::user($event->user->email)
             ->notify(
-                "Todays work on {$timeSheet->getProject()} with id {$timeSheet->getId()} is faulty.",
+                "Todays work on {$event->dayEntry->project} with the id {$event->dayEntry->id} is faulty.",
                 true
             );
 
