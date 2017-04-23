@@ -8,16 +8,18 @@ use Bestit\HipChat\Facade\HipChat;
 class SendMissingTimeEntriesHipChatNotification
 {
     /**
+     * Send a message to the user to let them know that they might've forgotten
+     * to log their work time.
      *
+     * @param MissingTimeEntry $event
+     * @return void
      */
     public function handle(MissingTimeEntry $event)
     {
-        $user = $event->user;
-
         // send info to user
-        HipChat::user($user->getEmail())
+        HipChat::user($event->user->email)
             ->notify(
-                "There where no time entries by you yesterday. What was wrong?",
+                'There where no time entries by you yesterday. What was wrong?',
                 true
             );
 

@@ -4,8 +4,15 @@
     "keywords": ["framework", "laravel"],
     "license": "MIT",
     "type": "project",
+	"repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/bestit/harvest-api"
+        }
+    ],
     "require": {
         "php": ">=7.0.0",
+        "bestit/harvest-api": "dev-master",
         "bestit/hipchat-api": "dev-master",
         "guzzlehttp/guzzle": "~5.3|~6.0",
         "laravel/framework": "5.4.*",

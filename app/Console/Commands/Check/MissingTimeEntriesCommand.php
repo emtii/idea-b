@@ -2,9 +2,10 @@
 
 namespace App\Console\Commands\Check;
 
-use App\Http\Controllers\Check\MissingTimeEntriesController;
+use App\Events\MissingTimeEntry;
+use BestIt\Harvest\Facade\Harvest;
+use BestIt\Harvest\Models\Users\User;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Log;
 
 class MissingTimeEntriesCommand extends Command
 {
@@ -26,18 +27,22 @@ class MissingTimeEntriesCommand extends Command
      * Execute the console command.
      *
      * @return void
+     * @TODO status bar
      */
     public function handle()
     {
-        Log::notice('CHECK > MISSING TIMEENTRIES - START');
+        $users = Harvest::users()->all();
 
-        $missingte = new MissingTimeEntriesController();
-        $result = $missingte->run();
+        info("Checking for missing time entries, user count: {$users->count()}");
 
-        Log::notice('CHECK > MISSING TIMEENTRIES - END, result:');
-        Log::notice(
-            'count => ' . $result['count'] .
-            ' failures => ' . $result['failures']
-        );
+        /** @var User $user */
+        foreach ($users as $user) {
+            $timesheet = Harvest::timesheet()->all(true, null, $user->id);
+
+            if ($timesheet->dayEntries->count() === 0) {
+                info("{$user->email} does not have any time entries today.");
+                event(new MissingTimeEntry($user));
+            }
+        }
     }
 }
