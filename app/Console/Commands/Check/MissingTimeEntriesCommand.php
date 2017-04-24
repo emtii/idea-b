@@ -27,13 +27,13 @@ class MissingTimeEntriesCommand extends Command
      * Execute the console command.
      *
      * @return void
-     * @TODO status bar
      */
     public function handle()
     {
         $users = Harvest::users()->all();
 
         info("Checking for missing time entries, user count: {$users->count()}");
+        $bar = $this->output->createProgressBar($users->count());
 
         /** @var User $user */
         foreach ($users as $user) {
@@ -43,6 +43,10 @@ class MissingTimeEntriesCommand extends Command
                 info("{$user->email} does not have any time entries today.");
                 event(new MissingTimeEntry($user));
             }
+
+            $bar->advance();
         }
+
+        $bar->finish();
     }
 }
