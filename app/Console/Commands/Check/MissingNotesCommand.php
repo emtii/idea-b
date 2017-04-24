@@ -28,30 +28,27 @@ class MissingNotesCommand extends Command
      * Execute the console command.
      *
      * @return void
-     * @TODO status bar, clean this up further.
      */
     public function handle()
     {
         $users = Harvest::users()->all();
 
         info("Checking for missing notes, user count: {$users->count()}");
+        $bar = $this->output->createProgressBar($users->count());
 
         /** @var User $user */
         foreach ($users as $user) {
             $faultyDayEntries = $this->getFaultyDayEntriesForUser($user);
 
-            if (count($faultyDayEntries) > 0) {
-                foreach ($faultyDayEntries as $faultyDayEntry) {
-                    /** @var User $user */
-                    $user = $faultyDayEntry['user'];
-                    /** @var DayEntry $dayEntry */
-                    $dayEntry = $faultyDayEntry['dayEntry'];
-
-                    info("{$user->email}'s day entry with the ID of {$dayEntry->id} is faulty");
-                    event(new MissingNote($user, $dayEntry));
-                }
+            foreach ($faultyDayEntries as $faultyDayEntry) {
+                info("{$user->email}'s day entry with the ID of {$faultyDayEntry->id} is faulty");
+                event(new MissingNote($user, $faultyDayEntry));
             }
+
+            $bar->advance();
         }
+
+        $bar->finish();
     }
 
     /**
@@ -59,7 +56,7 @@ class MissingNotesCommand extends Command
      * Only checking if notes are empty for the time being.
      *
      * @param User $user
-     * @return array
+     * @return DayEntry[]
      */
     private function getFaultyDayEntriesForUser(User $user): array
     {
@@ -69,10 +66,7 @@ class MissingNotesCommand extends Command
         /** @var DayEntry $dayEntry */
         foreach ($timesheet->dayEntries as $dayEntry) {
             if (empty($dayEntry->notes)) {
-                $faultyDayEntries[] = [
-                    'dayEntry' => $dayEntry,
-                    'user' => $user
-                ];
+                $faultyDayEntries[] = $dayEntry;
             }
         }
 
