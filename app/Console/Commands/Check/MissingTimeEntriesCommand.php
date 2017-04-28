@@ -21,7 +21,7 @@ class MissingTimeEntriesCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Check every existing harvest user for missing timeentries today.';
+    protected $description = 'Check every existing harvest user for missing time entries today.';
 
     /**
      * Execute the console command.
