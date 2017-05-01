@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\Check\BookedLessThanCommand;
 use App\Console\Commands\Check\MissingNotesCommand;
 use App\Console\Commands\Check\MissingTimeEntriesCommand;
 use Illuminate\Console\Scheduling\Schedule;
@@ -16,7 +17,8 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         MissingNotesCommand::class,
-        MissingTimeEntriesCommand::class
+        MissingTimeEntriesCommand::class,
+        BookedLessThanCommand::class
     ];
 
     /**
@@ -27,8 +29,14 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+        $schedule->command(BookedLessThanCommand::class)
+            ->dailyAt('20:00');
+
+        $schedule->command(MissingNotesCommand::class)
+            ->dailyAt('21:00');
+
+        $schedule->command(MissingTimeEntriesCommand::class)
+            ->dailyAt('22:00');
     }
 
     /**
