@@ -29,7 +29,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command(MissingNotesCommand::class)->dailyAt('21:00');
+        $schedule->command(MissingNotesCommand::class)->everyThirtyMinutes();
         //$schedule->command(MissingTimeEntriesCommand::class)->dailyAt('22:00');
         //$schedule->command(BookedLessThanCommand::class)->dailyAt('20:00');
     }
