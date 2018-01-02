@@ -231,7 +231,6 @@ return [
         'HipChat' => Bestit\HipChat\Facade\HipChat::class,
         'Harvest' => BestIt\Harvest\Facade\Harvest::class,
 
-
     ],
 
 ];

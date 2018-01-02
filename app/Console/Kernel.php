@@ -18,7 +18,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         MissingNotesCommand::class,
         MissingTimeEntriesCommand::class,
-        BookedLessThanCommand::class
+        BookedLessThanCommand::class,
     ];
 
     /**
@@ -29,14 +29,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command(BookedLessThanCommand::class)
-            ->dailyAt('20:00');
-
-        $schedule->command(MissingNotesCommand::class)
-            ->dailyAt('21:00');
-
-        $schedule->command(MissingTimeEntriesCommand::class)
-            ->dailyAt('22:00');
+        $schedule->command(MissingNotesCommand::class)->dailyAt('21:00');
+        //$schedule->command(MissingTimeEntriesCommand::class)->dailyAt('22:00');
+        //$schedule->command(BookedLessThanCommand::class)->dailyAt('20:00');
     }
 
     /**

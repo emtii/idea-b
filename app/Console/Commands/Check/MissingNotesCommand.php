@@ -40,9 +40,11 @@ class MissingNotesCommand extends Command
         foreach ($users as $user) {
             $faultyDayEntries = $this->getFaultyDayEntriesForUser($user);
 
-            foreach ($faultyDayEntries as $faultyDayEntry) {
-                info("{$user->email}'s day entry with the ID of {$faultyDayEntry->id} is faulty");
-                event(new MissingNote($user, $faultyDayEntry));
+            if (!empty($faultyDayEntries)) {
+                foreach ($faultyDayEntries as $faultyDayEntry) {
+                    info("{$user->email}'s day entry with the ID of {$faultyDayEntry->id} is faulty");
+                    event(new MissingNote($user, $faultyDayEntry));
+                }
             }
 
             $bar->advance();

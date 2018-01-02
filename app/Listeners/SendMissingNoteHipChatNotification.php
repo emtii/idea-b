@@ -11,22 +11,16 @@ class SendMissingNoteHipChatNotification
      * Handles the event, sends a message to the user on HipChat.
      *
      * @param MissingNote $event
+     *
      * @return void
+     * @throws \Exception
      */
     public function handle(MissingNote $event)
     {
         // send info to user
         HipChat::user($event->user->email)
             ->notify(
-                "Todays work on {$event->dayEntry->project} with the id {$event->dayEntry->id} is faulty.",
-                true
+                "Todays work on {$event->dayEntry->project} with the id {$event->dayEntry->id} is faulty: No Note found."
             );
-
-        // todo: random anonymous blame message to room
-        //HipChat::room('Allgemein')
-        //  ->notify('
-        //      B says: Oooppssss... found faulty time entries',
-        //      true
-        //);
     }
 }
