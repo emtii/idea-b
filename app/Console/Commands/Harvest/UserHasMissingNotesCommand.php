@@ -1,14 +1,14 @@
 <?php declare(strict_types=1);
 
-namespace App\Console\Commands\Check;
+namespace App\Console\Commands\Harvest;
 
-use App\Events\MissingNote;
+use App\Events\Commands\Harvest\UserHasMissingNoteEvent;
 use BestIt\Harvest\Facade\Harvest;
 use BestIt\Harvest\Models\Timesheet\DayEntry;
 use BestIt\Harvest\Models\Users\User;
 use Illuminate\Console\Command;
 
-class MissingNotesCommand extends Command
+class UserHasMissingNotesCommand extends Command
 {
     /**
      * The name and signature of the console command.
@@ -22,7 +22,7 @@ class MissingNotesCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Check for empty notes of todays daily time entries.';
+    protected $description = 'Harvest for empty notes of todays daily time entries.';
 
     /**
      * Execute the console command.
@@ -33,24 +33,27 @@ class MissingNotesCommand extends Command
     {
         $users = Harvest::users()->all();
 
-        info("Checking for missing notes, user count: {$users->count()}");
-        $bar = $this->output->createProgressBar($users->count());
+        info('Checking for missing notes.');
 
         /** @var User $user */
         foreach ($users as $user) {
-            $faultyDayEntries = $this->getFaultyDayEntriesForUser($user);
+            $faultyDayEntries = null;
 
-            if (!empty($faultyDayEntries)) {
+            // get faulty day entries only for active users
+            if ($user->isActive === true) {
+                $faultyDayEntries = $this->getFaultyDayEntriesForUser($user);
+            }
+
+            // if customer has faulty day entries fire event
+            if ($faultyDayEntries !== null) {
                 foreach ($faultyDayEntries as $faultyDayEntry) {
                     info("{$user->email}'s day entry with the ID of {$faultyDayEntry->id} is faulty");
-                    event(new MissingNote($user, $faultyDayEntry));
+                    event(new UserHasMissingNoteEvent($user, $faultyDayEntry));
                 }
             }
 
-            $bar->advance();
+            info("{$user->email}'s day entries are fine.");
         }
-
-        $bar->finish();
     }
 
     /**

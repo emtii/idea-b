@@ -2,12 +2,10 @@
 
 namespace App\Providers;
 
-use App\Events\BookedLessThan;
-use App\Events\MissingNote;
-use App\Events\MissingTimeEntry;
-use App\Listeners\SendBookedLessThanHipChatNotification;
-use App\Listeners\SendMissingNoteHipChatNotification;
-use App\Listeners\SendMissingTimeEntriesHipChatNotification;
+use App\Events\Commands\Harvest\UserHasMissingNoteEvent;
+use App\Events\Commands\Harvest\UserHasUnapprovedTimeEntriesEvent;
+use App\Listeners\Commands\Harvest\SendHipChatNotificationBecauseOfMissingNoteListener;
+use App\Listeners\Commands\Harvest\SendHipChatNotificationBecauseOfUnapprovedTimeEntriesListener;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -18,14 +16,11 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        MissingNote::class => [
-            SendMissingNoteHipChatNotification::class
+        UserHasMissingNoteEvent::class => [
+            SendHipChatNotificationBecauseOfMissingNoteListener::class
         ],
-        MissingTimeEntry::class => [
-            SendMissingTimeEntriesHipChatNotification::class
-        ],
-        BookedLessThan::class => [
-            SendBookedLessThanHipChatNotification::class
+        UserHasUnapprovedTimeEntriesEvent::class => [
+            SendHipChatNotificationBecauseOfUnapprovedTimeEntriesListener::class
         ]
     ];
 

@@ -1,26 +1,27 @@
 <?php declare(strict_types=1);
 
-namespace App\Events;
+namespace App\Events\Commands\Harvest;
 
+use BestIt\Harvest\Models\Timesheet\DayEntry;
 use BestIt\Harvest\Models\Users\User;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 
-class MissingTimeEntry
+class UserHasUnapprovedTimeEntriesEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    /** @var User $user */
-    public $user;
+    /** @var string $email */
+    public $email;
 
     /**
      * Create a new event instance.
      *
-     * @param User $user
+     * @param string $email
      */
-    public function __construct(User $user)
+    public function __construct(string $email)
     {
-        $this->user = $user;
+        $this->email = $email;
     }
 }

@@ -8,9 +8,8 @@ This is B.
 
 ### Harvest
 
-- ~~check for missing notes in time entries for every customer of today and send notice~~
-- ~~check for missing time entries of last work day~~
-- ~~check for less than 4 hours booked yesterday~~
+- check for missing notes in time entries for every customer of today and send notice
+- check for unapproved time entries of last week for every user and send notice
 
 ## Usage
 

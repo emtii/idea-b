@@ -2,9 +2,8 @@
 
 namespace App\Console;
 
-use App\Console\Commands\Check\BookedLessThanCommand;
-use App\Console\Commands\Check\MissingNotesCommand;
-use App\Console\Commands\Check\MissingTimeEntriesCommand;
+use App\Console\Commands\Harvest\UserHasMissingNotesCommand;
+use App\Console\Commands\Harvest\UserHasUnapprovedTimeEntriesCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -16,9 +15,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        MissingNotesCommand::class,
-        MissingTimeEntriesCommand::class,
-        BookedLessThanCommand::class,
+        UserHasMissingNotesCommand::class,
+        UserHasUnapprovedTimeEntriesCommand::class
     ];
 
     /**
@@ -29,11 +27,14 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command(MissingNotesCommand::class)
-                 ->everyThirtyMinutes()
-                 ->between('07:00', '18:00');
-        //$schedule->command(MissingTimeEntriesCommand::class)->dailyAt('22:00');
-        //$schedule->command(BookedLessThanCommand::class)->dailyAt('20:00');
+        $schedule->command(UserHasMissingNotesCommand::class)
+            ->everyThirtyMinutes()
+            ->between('07:00', '18:00');
+
+        $schedule->command(UserHasUnapprovedTimeEntriesCommand::class)
+            ->weekly()
+            ->mondays()
+            ->at('10:00');
     }
 
     /**

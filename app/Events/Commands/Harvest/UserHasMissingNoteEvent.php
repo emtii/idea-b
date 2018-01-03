@@ -1,30 +1,31 @@
 <?php declare(strict_types=1);
 
-namespace App\Events;
+namespace App\Events\Commands\Harvest;
 
+use BestIt\Harvest\Models\Timesheet\DayEntry;
 use BestIt\Harvest\Models\Users\User;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 
-class BookedLessThan
+class UserHasMissingNoteEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /** @var User $user */
     public $user;
-    /** @var float $hours */
-    public $hours;
+    /** @var DayEntry $dayEntry */
+    public $dayEntry;
 
     /**
      * Create a new event instance.
      *
      * @param User $user
-     * @param float $hours
+     * @param DayEntry $dayEntry
      */
-    public function __construct(User $user, float $hours)
+    public function __construct(User $user, DayEntry $dayEntry)
     {
         $this->user = $user;
-        $this->hours = $hours;
+        $this->dayEntry = $dayEntry;
     }
 }
