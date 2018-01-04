@@ -22,7 +22,7 @@ class UserHasMissingNotesCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Harvest for empty notes of todays daily time entries.';
+    protected $description = 'Check harvest for empty notes of todays daily time entries.';
 
     /**
      * Execute the console command.
@@ -35,24 +35,28 @@ class UserHasMissingNotesCommand extends Command
 
         info('Checking for missing notes.');
 
-        /** @var User $user */
-        foreach ($users as $user) {
-            $faultyDayEntries = null;
+        if ($users !== null) {
+            /** @var User $user */
+            foreach ($users as $user) {
+                $faultyDayEntries = null;
 
-            // get faulty day entries only for active users
-            if ($user->isActive === true) {
-                $faultyDayEntries = $this->getFaultyDayEntriesForUser($user);
-            }
+                // get faulty day entries only for active users
+                if ($user->isActive === true) {
+                    $faultyDayEntries = $this->getFaultyDayEntriesForUser($user);
+                }
 
-            // if customer has faulty day entries fire event
-            if ($faultyDayEntries !== null) {
-                foreach ($faultyDayEntries as $faultyDayEntry) {
-                    info("{$user->email}'s day entry with the ID of {$faultyDayEntry->id} is faulty");
-                    event(new UserHasMissingNoteEvent($user, $faultyDayEntry));
+                // if customer has faulty day entries fire event
+                if ($faultyDayEntries !== null) {
+                    foreach ($faultyDayEntries as $faultyDayEntry) {
+                        info("{$user->email}'s day entry with the ID of {$faultyDayEntry->id} is faulty.");
+                        event(new UserHasMissingNoteEvent($user, $faultyDayEntry));
+                    }
+                }
+
+                if (!$faultyDayEntries) {
+                    info("{$user->email}'s day entries are fine.");
                 }
             }
-
-            info("{$user->email}'s day entries are fine.");
         }
     }
 

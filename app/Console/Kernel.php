@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\Harvest\UserHasCuriousTimeEntryCommand;
 use App\Console\Commands\Harvest\UserHasMissingNotesCommand;
 use App\Console\Commands\Harvest\UserHasUnapprovedTimeEntriesCommand;
 use Illuminate\Console\Scheduling\Schedule;
@@ -16,7 +17,8 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         UserHasMissingNotesCommand::class,
-        UserHasUnapprovedTimeEntriesCommand::class
+        UserHasUnapprovedTimeEntriesCommand::class,
+        UserHasCuriousTimeEntryCommand::class
     ];
 
     /**
@@ -35,6 +37,10 @@ class Kernel extends ConsoleKernel
             ->weekly()
             ->mondays()
             ->at('10:00');
+
+        $schedule->command(UserHasCuriousTimeEntryCommand::class)
+            ->hourly()
+            ->between('07:00', '18:00');
     }
 
     /**
