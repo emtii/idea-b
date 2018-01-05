@@ -95,6 +95,10 @@ class UserHasCuriousTimeEntryCommand extends Command
             return true;
         }
 
+        if ($this->doesThisDayEntryHasANoteWithLessThanFiveLetters($dayEntry)) {
+            return true;
+        }
+
         // @todo: add more checks
 
         return false;
@@ -110,5 +114,17 @@ class UserHasCuriousTimeEntryCommand extends Command
     {
         $bookedHours = (double) $dayEntry->hours;
         return $bookedHours >= 8;
+    }
+
+    /**
+     * Does this time entry has a note with less than five letters?
+     *
+     * @param DayEntry $dayEntry
+     * @return bool
+     */
+    private function doesThisDayEntryHasANoteWithLessThanFiveLetters(DayEntry $dayEntry): bool
+    {
+        $letterCountOfNote = strlen($dayEntry->notes);
+        return $letterCountOfNote < 5; // "daily" is allowed,
     }
 }
